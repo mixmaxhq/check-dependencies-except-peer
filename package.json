@@ -1,0 +1,58 @@
+{
+  "name": "check-dependencies-except-peer",
+  "description": "Ensure that your package-lock matches your package and is self-consistent, and ignore missing peerDependencies",
+  "version": "0.1.0",
+  "author": "Eli Skeggs <eli@mixmax.com> (https://mixmax.com)",
+  "bin": {
+    "check-dependencies-except-peer": "./bin/run"
+  },
+  "bugs": {
+    "url": "https://github.com/mixmaxhq/check-dependencies-except-peer/issues"
+  },
+  "dependencies": {
+    "@oclif/command": "^1.5.6",
+    "@oclif/config": "^1.9.0",
+    "@oclif/plugin-help": "^2.1.4",
+    "cli-ux": "^4.9.3",
+    "eslint-config-mixmax": "^2.0.0",
+    "lodash": "^4.17.11",
+    "npm": "6.4.1",
+    "read-package-tree": "^5.2.1",
+    "semver": "^5.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-oclif": "^3.1.0",
+    "rollup": "^0.67.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/dist/index.js"
+  ],
+  "homepage": "https://github.com/mixmaxhq/check-dependencies-except-peer#readme",
+  "keywords": [
+    "check",
+    "dependencies",
+    "evaluate",
+    "validate"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "oclif": {
+    "bin": "check-dependencies-except-peer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixmaxhq/check-dependencies-except-peer.git"
+  },
+  "scripts": {
+    "ci": "npm run lint",
+    "build": "rollup -c rollup.config.js",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
