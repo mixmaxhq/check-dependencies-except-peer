@@ -59,17 +59,8 @@ function checkDependencies(dir, physicalTree, options) {
   const unlooped = filterFound(unloop(data));
   const lite = getLite(unlooped, undefined, {ignorePeer: options.ignorePeer});
 
-  // const allDependencies = new Map();
-
-  // gatherDependencies(unlooped);
-  // console.log(unlooped.dependencies['synchronize-pool']);
-
   return lite.problems || [];
 }
-
-// function gatherDependencies(data) {
-//   if (hasOwnProperty.call(data, '_found') && data._found !== 'explicit')
-// }
 
 function pruneNestedExtraneous(data, visited) {
   visited = visited || [];
