@@ -1,3 +1,6 @@
+// This file has been heavily adapted from https://github.com/npm/cli/blob/latest/lib/ls.js.
+// Any relevant licensing applies.
+
 import path from 'path';
 import readPackageTree from 'read-package-tree';
 import semver from 'semver';
