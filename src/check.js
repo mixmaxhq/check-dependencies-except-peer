@@ -6,7 +6,7 @@ import readPackageTree from 'read-package-tree';
 import semver from 'semver';
 import npm from 'npm/lib/npm.js';
 import mutateIntoLogicalTree from 'npm/lib/install/mutate-into-logical-tree.js';
-import {computeMetadata} from 'npm/lib/install/deps.js';
+import { computeMetadata } from 'npm/lib/install/deps.js';
 import readShrinkwrap from 'npm/lib/install/read-shrinkwrap.js';
 import packageId from 'npm/lib/utils/package-id.js';
 
@@ -18,7 +18,10 @@ export const states = {
 
 function noop() {}
 
-export async function check(dir, options = {development: false, production: false, ignorePeer: false}) {
+export async function check(
+  dir,
+  options = { development: false, production: false, ignorePeer: false }
+) {
   const progress = options.progress || noop;
   return new Promise((resolve, reject) => {
     progress(states.scanTree);
@@ -28,7 +31,7 @@ export async function check(dir, options = {development: false, production: fals
         return;
       }
 
-      if (!physicalTree) physicalTree = {package: {}, path: dir};
+      if (!physicalTree) physicalTree = { package: {}, path: dir };
       physicalTree.isTop = true;
       progress(states.readLockfile);
       // Inflation is necessary to catch errors like extraneous packages and some
@@ -60,7 +63,7 @@ function checkDependencies(dir, physicalTree, options) {
   filterByEnv(data, options);
 
   const unlooped = filterFound(unloop(data));
-  const lite = getLite(unlooped, undefined, {ignorePeer: options.ignorePeer});
+  const lite = getLite(unlooped, undefined, { ignorePeer: options.ignorePeer });
 
   return lite.problems || [];
 }
@@ -77,18 +80,26 @@ function pruneNestedExtraneous(data, visited) {
   }
 }
 
-function filterByEnv(data, {development, production}) {
+function filterByEnv(data, { development, production }) {
   const dependencies = {};
   const devKeys = Object.keys(data.devDependencies || []);
   const prodKeys = Object.keys(data._dependencies || []);
   Object.keys(data.dependencies).forEach(function(name) {
-    if (!development && inList(devKeys, name) && !inList(prodKeys, name) && data.dependencies[name].missing) {
+    if (
+      !development &&
+      inList(devKeys, name) &&
+      !inList(prodKeys, name) &&
+      data.dependencies[name].missing
+    ) {
       return;
     }
 
-    if ((development && inList(devKeys, name)) || // only --dev
-        (production && inList(prodKeys, name)) || // only --production
-        (!development && !production)) { // no --production|--dev|--only=xxx
+    if (
+      (development && inList(devKeys, name)) || // only --dev
+      (production && inList(prodKeys, name)) || // only --production
+      (!development && !production)
+    ) {
+      // no --production|--dev|--only=xxx
       dependencies[name] = data.dependencies[name];
     }
   });
@@ -99,7 +110,7 @@ function isCruft(data) {
   return data.extraneous && data.error && data.error.code === 'ENOTDIR';
 }
 
-function getLite(data, noname, {ignorePeer = false} = {}) {
+function getLite(data, noname, { ignorePeer = false } = {}) {
   const lite = {};
 
   if (isCruft(data)) return lite;
@@ -112,8 +123,11 @@ function getLite(data, noname, {ignorePeer = false} = {}) {
     lite.problems.push('extraneous: ' + packageId(data) + ' ' + (data.path || ''));
   }
 
-  if (data.error && data.path !== path.resolve(npm.globalDir, '..') &&
-      (data.error.code !== 'ENOENT' || noname)) {
+  if (
+    data.error &&
+    data.path !== path.resolve(npm.globalDir, '..') &&
+    (data.error.code !== 'ENOENT' || noname)
+  ) {
     lite.invalid = true;
     lite.problems = lite.problems || [];
     const message = data.error.message;
@@ -131,59 +145,53 @@ function getLite(data, noname, {ignorePeer = false} = {}) {
   if (data.invalid) {
     lite.invalid = true;
     lite.problems = lite.problems || [];
-    lite.problems.push('invalid: ' +
-                       packageId(data) +
-                       ' ' + (data.path || ''));
+    lite.problems.push('invalid: ' + packageId(data) + ' ' + (data.path || ''));
   }
 
   if (data.peerInvalid) {
     lite.peerInvalid = true;
     if (!ignorePeer) {
       lite.problems = lite.problems || [];
-      lite.problems.push('peer dep not met: ' +
-                         packageId(data) +
-                         ' ' + (data.path || ''));
+      lite.problems.push('peer dep not met: ' + packageId(data) + ' ' + (data.path || ''));
     }
   }
 
   const deps = (data.dependencies && Object.keys(data.dependencies)) || [];
   if (deps.length) {
-    lite.dependencies = deps.map(function(d) {
-      const dep = data.dependencies[d];
-      if (dep.missing && !dep.optional) {
-        lite.problems = lite.problems || [];
-        let p = 'missing: ';
-        p += d + '@' + dep.requiredBy +
-            ', required by ' +
-            packageId(data);
-        lite.problems.push(p);
-        if (dep.dependencies) {
-          return [d, getLite(dep, true, {ignorePeer})];
-        } else {
-          return [d, { required: dep.requiredBy, missing: true }];
-        }
-      } else if (dep.peerMissing) {
-        if (!ignorePeer) {
+    lite.dependencies = deps
+      .map(function(d) {
+        const dep = data.dependencies[d];
+        if (dep.missing && !dep.optional) {
           lite.problems = lite.problems || [];
-          dep.peerMissing.forEach(function(missing) {
-            const pdm = 'peer dep missing: ' +
-                missing.requires +
-                ', required by ' +
-                missing.requiredBy;
-            lite.problems.push(pdm);
-          });
+          let p = 'missing: ';
+          p += d + '@' + dep.requiredBy + ', required by ' + packageId(data);
+          lite.problems.push(p);
+          if (dep.dependencies) {
+            return [d, getLite(dep, true, { ignorePeer })];
+          } else {
+            return [d, { required: dep.requiredBy, missing: true }];
+          }
+        } else if (dep.peerMissing) {
+          if (!ignorePeer) {
+            lite.problems = lite.problems || [];
+            dep.peerMissing.forEach(function(missing) {
+              const pdm =
+                'peer dep missing: ' + missing.requires + ', required by ' + missing.requiredBy;
+              lite.problems.push(pdm);
+            });
+          }
+          return [d, { required: dep, peerMissing: true }];
         }
-        return [d, { required: dep, peerMissing: true }];
-      }
-      return [d, getLite(dep, true, {ignorePeer})];
-    }).reduce(function(deps, d) {
-      if (d[1].problems) {
-        lite.problems = lite.problems || [];
-        lite.problems.push.apply(lite.problems, d[1].problems);
-      }
-      deps[d[0]] = d[1];
-      return deps;
-    }, {});
+        return [d, getLite(dep, true, { ignorePeer })];
+      })
+      .reduce(function(deps, d) {
+        if (d[1].problems) {
+          lite.problems = lite.problems || [];
+          lite.problems.push.apply(lite.problems, d[1].problems);
+        }
+        deps[d[0]] = d[1];
+        return deps;
+      }, {});
   }
   return lite;
 }
@@ -195,7 +203,7 @@ function unloop(root) {
 
   while (queue.length) {
     const current = queue.shift();
-    const deps = current.dependencies = current.dependencies || {};
+    const deps = (current.dependencies = current.dependencies || {});
     Object.keys(deps).forEach(function(d) {
       let dep = deps[d];
       if (dep.missing && !dep.dependencies) return;
