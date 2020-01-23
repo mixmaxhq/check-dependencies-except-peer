@@ -1,12 +1,10 @@
 {
-  "extends": "mixmax/node",
+  "extends": ["mixmax/node", "mixmax/prettier"],
   "rules": {
     "no-var": "error",
-    "no-use-before-define": 0,
-    "prettier/prettier": "error"
+    "no-use-before-define": 0
   },
   "parserOptions": {
     "sourceType": "module"
-  },
-  "plugins": ["prettier"]
+  }
 }
