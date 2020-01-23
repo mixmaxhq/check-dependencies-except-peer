@@ -95,11 +95,13 @@ function filterByEnv(data, { development, production }) {
     }
 
     if (
-      (development && inList(devKeys, name)) || // only --dev
-      (production && inList(prodKeys, name)) || // only --production
+      // only --dev
+      (development && inList(devKeys, name)) ||
+      // only --production
+      (production && inList(prodKeys, name)) ||
+      // no --production|--dev|--only=xxx
       (!development && !production)
     ) {
-      // no --production|--dev|--only=xxx
       dependencies[name] = data.dependencies[name];
     }
   });
