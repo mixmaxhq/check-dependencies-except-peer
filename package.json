@@ -1,7 +1,7 @@
 {
   "name": "check-dependencies-except-peer",
   "description": "Ensure that your package-lock matches your package and is self-consistent, and ignore missing peerDependencies",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Eli Skeggs <eli@mixmax.com> (https://mixmax.com)",
   "bin": {
     "check-dependencies-except-peer": "./bin/run"
