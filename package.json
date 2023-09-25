@@ -20,7 +20,7 @@
     "semver": "^5.6.0"
   },
   "devDependencies": {
-    "@mixmaxhq/prettier-config": "^1.0.0",
+    "@mixmaxhq/prettier-config": "^1.1.0",
     "eslint": "^6.8.0",
     "eslint-config-mixmax": "^4.5.0",
     "eslint-config-oclif": "^3.1.0",
